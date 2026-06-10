@@ -23,6 +23,7 @@ test('checkboxes: end with both checked', async ({ page }) => {
     const isCb1Checked = await cb1.isChecked()
     const isCb2Checked = await cb2.isChecked()
 
+    // Note: best practice to assert a known default state before performing the meat of the test
     await expect(cb1).not.toBeChecked()
     await expect(cb2).toBeChecked()   
     
