@@ -5,7 +5,7 @@
  */
 
 import { test, expect, Page, Locator } from "@playwright/test"
-import { Pages } from "../helpers/enums"
+import { Pages } from "../../helpers/enums"
 
 enum TestData {
     ValidUsername = 'standard_user',
@@ -18,10 +18,10 @@ enum TestData {
  */
 class LoginPage {
     private readonly page: Page
-    usernameField: Locator
-    passwordField: Locator
-    loginButton: Locator
-    errorView: Locator
+    readonly usernameField: Locator
+    readonly passwordField: Locator
+    readonly loginButton: Locator
+    readonly errorView: Locator
 
     constructor(page: Page) {
         this.page = page
@@ -42,19 +42,19 @@ test('valid username + valid password', async ({ page }) => {
     const productsPageLabel = page.locator('[data-test="title"]')
 
     await lp.usernameField.fill(TestData.ValidUsername)
-    expect(lp.usernameField).toHaveValue(TestData.ValidUsername)
+    await expect(lp.usernameField).toHaveValue(TestData.ValidUsername)
 
     await lp.passwordField.fill(TestData.ValidPassword)
-    expect(lp.passwordField).toHaveValue(TestData.ValidPassword)
+    await expect(lp.passwordField).toHaveValue(TestData.ValidPassword)
 
     await lp.loginButton.click()
-    expect(productsPageLabel).toHaveText("Products")
+    await expect(productsPageLabel).toHaveText("Products")
 })
 
 // partition 4
 test('empty username + empty password', async ({ page }) => {
     const lp = new LoginPage(page)
     await lp.loginButton.click()
-    expect(lp.errorView).toHaveText('Epic sadface: Username is required')
+    await expect(lp.errorView).toHaveText('Epic sadface: Username is required')
 })
 
