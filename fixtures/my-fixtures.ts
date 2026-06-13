@@ -1,6 +1,6 @@
 import base from "@playwright/test";
 import { LoginPage } from "../page-objects/LoginPage";
-import testUsersRaw from "../test-data/test_users.json";
+import * as fs from "fs";
 
 type TestUser = {
   partition: string;
@@ -14,7 +14,10 @@ type MyFixtures = {
   testUsers: TestUser[];
 };
 
-export const testUsers = JSON.parse(JSON.stringify(testUsersRaw)) as TestUser[];
+const testUsersFilePath = "automation/test-data/test_users.json";
+export const testUsers = JSON.parse(
+  fs.readFileSync(testUsersFilePath, "utf-8"),
+) as TestUser[];
 
 export const test = base.extend<MyFixtures>({
   testUsers: async ({}, use) => {
