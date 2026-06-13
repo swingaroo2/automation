@@ -1,5 +1,5 @@
-import { Locator, Page, test, expect } from "@playwright/test"
-import { Pages } from "../../helpers/enums"
+import { Locator, Page, test, expect } from "@playwright/test";
+import { Pages } from "../../test-data/enums";
 
 // class CheckboxesPage {
 //     private readonly page: Page
@@ -16,20 +16,20 @@ import { Pages } from "../../helpers/enums"
 //     }
 // }
 
-test('checkboxes: end with both checked', async ({ page }) => {
-    await page.goto(`${Pages.TheInternet}checkboxes`)
-    const cb1 = page.getByRole('checkbox').first()
-    const cb2 = page.getByRole('checkbox').nth(1)
-    const isCb1Checked = await cb1.isChecked()
-    const isCb2Checked = await cb2.isChecked()
+test("checkboxes: end with both checked", async ({ page }) => {
+  await page.goto(`${Pages.TheInternet}checkboxes`);
+  const cb1 = page.getByRole("checkbox").first();
+  const cb2 = page.getByRole("checkbox").nth(1);
+  const isCb1Checked = await cb1.isChecked();
+  const isCb2Checked = await cb2.isChecked();
 
-    // Note: best practice to assert a known default state before performing the meat of the test
-    await expect(cb1).not.toBeChecked()
-    await expect(cb2).toBeChecked()   
-    
-    await cb1.check()
-    await cb2.check()
+  // Note: best practice to assert a known default state before performing the meat of the test
+  await expect(cb1).not.toBeChecked();
+  await expect(cb2).toBeChecked();
 
-    await expect(cb1).toBeChecked()
-    await expect(cb2).toBeChecked()
-})
+  await cb1.check();
+  await cb2.check();
+
+  await expect(cb1).toBeChecked();
+  await expect(cb2).toBeChecked();
+});

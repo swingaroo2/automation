@@ -1,0 +1,32 @@
+[
+  {
+    "partition": "valid credentials",
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "errorMessage": ""
+  },
+  {
+    "partition": "invalid credentials",
+    "username": "!standard_user",
+    "password": "secret_sauce",
+    "errorMessage": "Epic sadface: Username and password do not match any user in this service"
+  },
+  {
+    "partition": "empty username",
+    "username": "",
+    "password": "secret_sauce",
+    "errorMessage": "Epic sadface: Username is required"
+  },
+  {
+    "partition": "empty password",
+    "username": "standard_user",
+    "password": "",
+    "errorMessage": "Epic sadface: Password is required"
+  },
+  {
+    "partition": "locked out username",
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "errorMessage": "Epic sadface: Sorry, this user has been locked out."
+  }
+]

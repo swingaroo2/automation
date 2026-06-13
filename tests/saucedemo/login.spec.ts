@@ -1,60 +1,26 @@
-/**
- * Login Tests
- * - valid login test
- * - both fields empty test
- */
+import { expect } from "@playwright/test";
+import { test, testUsers } from "../../fixtures/my-fixtures";
+import { Pages } from "../../test-data/enums";
 
-import { test, expect, Page, Locator } from "@playwright/test"
-import { Pages } from "../../helpers/enums"
+test.describe("Login Tests", () => {
+  for (const user of testUsers) {
+    test(`login -- ${user.partition}`, async ({ loginPage, page }) => {
+      await expect(loginPage.usernameField).toBeEmpty();
+      await expect(loginPage.passwordField).toBeEmpty();
 
-enum TestData {
-    ValidUsername = 'standard_user',
-    ValidPassword = 'secret_sauce'
-}
+      await loginPage.fillLoginFields(user.username, user.password);
+      await loginPage.clickLoginButton();
 
-/**
- * I wrote this for practice with implementing POM. 
- * In reality, a small test file like this doesn't need a dedicated object modeling the login page
- */
-class LoginPage {
-    private readonly page: Page
-    readonly usernameField: Locator
-    readonly passwordField: Locator
-    readonly loginButton: Locator
-    readonly errorView: Locator
-
-    constructor(page: Page) {
-        this.page = page
-        this.usernameField = page.getByRole('textbox', { name: "Username" })
-        this.passwordField = page.getByRole('textbox', { name: "Password" })
-        this.loginButton = page.getByRole('button', { name: "Login" })
-        this.errorView = page.getByRole('heading').filter({ hasText: "Epic sadface" })
-    }
-}
-
-test.beforeEach(async ({ page }) => {
-    await page.goto(Pages.SauceDemo)
-})
-
-// partition 1
-test('valid username + valid password', async ({ page }) => {
-    const lp = new LoginPage(page)
-    const productsPageLabel = page.locator('[data-test="title"]')
-
-    await lp.usernameField.fill(TestData.ValidUsername)
-    await expect(lp.usernameField).toHaveValue(TestData.ValidUsername)
-
-    await lp.passwordField.fill(TestData.ValidPassword)
-    await expect(lp.passwordField).toHaveValue(TestData.ValidPassword)
-
-    await lp.loginButton.click()
-    await expect(productsPageLabel).toHaveText("Products")
-})
-
-// partition 4
-test('empty username + empty password', async ({ page }) => {
-    const lp = new LoginPage(page)
-    await lp.loginButton.click()
-    await expect(lp.errorView).toHaveText('Epic sadface: Username is required')
-})
-
+      if (user.errorMessage) {
+        await expect(loginPage.errorView).toBeVisible();
+        await expect(loginPage.errorView).toHaveText(user.errorMessage);
+        await expect(page).toHaveURL(Pages.SauceDemo);
+      } else {
+        await expect(loginPage.errorView).not.toBeVisible();
+        await expect(page).toHaveURL(Pages.SauceDemoInventory);
+        const expectedTitle = "Products";
+        await expect(page.locator(".title")).toHaveText(expectedTitle);
+      }
+    });
+  }
+});
