@@ -19,7 +19,7 @@ export class LoginPage {
   }
 
   async goto() {
-    await this.page.goto(Pages.SauceDemo);
+    await this.page.goto(Pages.SauceDemoLogin);
   }
 
   async fillLoginFields(username: string = "", password: string = "") {
@@ -29,5 +29,10 @@ export class LoginPage {
 
   async clickLoginButton() {
     await this.loginButton.click();
+  }
+
+  async performLogin(username: string = "", password: string = "") {
+    await this.fillLoginFields(username, password);
+    await this.clickLoginButton();
   }
 }

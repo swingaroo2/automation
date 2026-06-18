@@ -14,7 +14,7 @@ test.describe("Login Tests", () => {
       if (user.errorMessage) {
         await expect(loginPage.errorView).toBeVisible();
         await expect(loginPage.errorView).toHaveText(user.errorMessage);
-        await expect(page).toHaveURL(Pages.SauceDemo);
+        await expect(page).toHaveURL(Pages.SauceDemoLogin);
       } else {
         await expect(loginPage.errorView).not.toBeVisible();
         await expect(page).toHaveURL(Pages.SauceDemoInventory);
@@ -24,3 +24,9 @@ test.describe("Login Tests", () => {
     });
   }
 });
+
+/**
+ * More tests
+ * - navigate to inventory page without logging in
+ * - reload/navigate after firing logout request
+ */

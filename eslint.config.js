@@ -15,6 +15,9 @@ module.exports = [
     files: ["**/*.ts"],
     languageOptions: {
       parser: tsParser,
+      parserOptions: {
+        project: true,
+      },
       ecmaVersion: "latest",
       sourceType: "module",
     },
@@ -22,7 +25,8 @@ module.exports = [
       "@typescript-eslint": tsPlugin,
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-floating-promises": "error",
     },
   },
 ];
