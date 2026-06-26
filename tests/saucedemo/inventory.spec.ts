@@ -67,67 +67,123 @@ test.describe("Cart", () => {
     });
   });
 
-  test("assert one item added to cart", async ({ inventoryPage }) => {
+  test("one item added to empty cart", async ({ inventoryPage }) => {
     await test.step("add first inventory item to cart", async () => {
       const index = 0;
       await inventoryPage.addToCart(index);
-      await expect(inventoryPage.getCartButton(index)).toHaveText("Remove");
+      await expect(inventoryPage.getCartButton(index)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
       await expect(inventoryPage.cartBadge).toHaveText("1");
     });
   });
 
-  test("add two items to cart", async ({ inventoryPage }) => {
+  test("add two items to empty cart", async ({ inventoryPage }) => {
     await test.step("add first two inventory items to cart", async () => {
       const index = 0;
       const index2 = 1;
-      await inventoryPage.addToCart(index);
-      await inventoryPage.addToCart(index2);
-      await expect(inventoryPage.getCartButton(index)).toHaveText("Remove");
-      await expect(inventoryPage.getCartButton(index2)).toHaveText("Remove");
+      await inventoryPage.addToCartMultiple(2);
+      await expect(inventoryPage.getCartButton(index)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
+      await expect(inventoryPage.getCartButton(index2)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
       await expect(inventoryPage.cartBadge).toHaveText("2");
     });
   });
 
-  test("remove one item from cart", async ({ inventoryPage }) => {
+  test("remove one added item from cart", async ({ inventoryPage }) => {
     const index = 0;
 
     await test.step("add first inventory item to cart", async () => {
       await inventoryPage.addToCart(index);
-      await expect(inventoryPage.getCartButton(index)).toHaveText("Remove");
+      await expect(inventoryPage.getCartButton(index)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
       await expect(inventoryPage.cartBadge).toHaveText("1");
     });
 
     await test.step("remove first inventory item from cart", async () => {
       await inventoryPage.removeFromCart(index);
       await expect(inventoryPage.getCartButton(index)).toHaveText(
-        "Add to cart",
+        InventoryPage.CartButtonText.AddToCart,
       );
       await expect(inventoryPage.cartBadge).not.toBeAttached();
     });
   });
 
-  test("remove two items from cart", async ({ inventoryPage }) => {
+  test("remove two added items from cart", async ({ inventoryPage }) => {
     const index = 0;
     const index2 = 1;
 
     await test.step("add first two inventory items to cart", async () => {
-      await inventoryPage.addToCart(index);
-      await inventoryPage.addToCart(index2);
-      await expect(inventoryPage.getCartButton(index)).toHaveText("Remove");
-      await expect(inventoryPage.getCartButton(index2)).toHaveText("Remove");
+      await inventoryPage.addToCartMultiple(2);
+      await expect(inventoryPage.getCartButton(index)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
+      await expect(inventoryPage.getCartButton(index2)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
       await expect(inventoryPage.cartBadge).toHaveText("2");
     });
 
     await test.step("remove first two inventory items from cart", async () => {
-      await inventoryPage.removeFromCart(index);
-      await inventoryPage.removeFromCart(index2);
+      await inventoryPage.removeFromCartMultiple(2);
       await expect(inventoryPage.getCartButton(index)).toHaveText(
-        "Add to cart",
+        InventoryPage.CartButtonText.AddToCart,
       );
       await expect(inventoryPage.getCartButton(index2)).toHaveText(
-        "Add to cart",
+        InventoryPage.CartButtonText.AddToCart,
       );
       await expect(inventoryPage.cartBadge).not.toBeAttached();
+    });
+  });
+
+  test("remove item from cart with multiple existing items: cart badge assertion", async ({
+    inventoryPage,
+  }) => {
+    const numExistingItems = 3;
+
+    await test.step("preconditions: add three items to cart", async () => {
+      await inventoryPage.addToCartMultiple(numExistingItems);
+      await expect(inventoryPage.cartBadge).toHaveText(`${numExistingItems}`);
+    });
+
+    await test.step("remove one item from three-item cart", async () => {
+      await inventoryPage.removeFromCart(0);
+      await expect(inventoryPage.cartBadge).toHaveText(
+        `${numExistingItems - 1}`,
+      );
+    });
+  });
+
+  test("remove item from cart with multiple existing items: inventory button assertion", async ({
+    inventoryPage,
+  }) => {
+    const numExistingItems = 3;
+
+    await test.step("preconditions: add three items to cart", async () => {
+      await inventoryPage.addToCartMultiple(numExistingItems);
+
+      for (let idx = 0; idx < numExistingItems; idx++) {
+        await expect(inventoryPage.getCartButton(idx)).toHaveText(
+          InventoryPage.CartButtonText.Remove,
+        );
+      }
+    });
+
+    await test.step("remove one item from three-item cart", async () => {
+      await inventoryPage.removeFromCart(0);
+      await expect(inventoryPage.getCartButton(0)).toHaveText(
+        InventoryPage.CartButtonText.AddToCart,
+      );
+      await expect(inventoryPage.getCartButton(1)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
+      await expect(inventoryPage.getCartButton(2)).toHaveText(
+        InventoryPage.CartButtonText.Remove,
+      );
     });
   });
 });

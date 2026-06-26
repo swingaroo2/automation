@@ -51,15 +51,27 @@ export class InventoryPage {
   async addToCart(index: number) {
     await this.productList
       .nth(index)
-      .getByRole("button", { name: "Add to cart" })
+      .getByRole("button", { name: InventoryPage.CartButtonText.AddToCart })
       .click();
+  }
+
+  async addToCartMultiple(numberOfItems: number) {
+    for (let idx = 0; idx < numberOfItems; idx++) {
+      await this.addToCart(idx);
+    }
   }
 
   async removeFromCart(index: number) {
     await this.productList
       .nth(index)
-      .getByRole("button", { name: "Remove" })
+      .getByRole("button", { name: InventoryPage.CartButtonText.Remove })
       .click();
+  }
+
+  async removeFromCartMultiple(numberOfItems: number) {
+    for (let idx = 0; idx < numberOfItems; idx++) {
+      await this.removeFromCart(idx);
+    }
   }
 
   getCartButton(index: number): Locator {
@@ -74,4 +86,9 @@ export namespace InventoryPage {
     PriceHighToLow: "Price (high to low)",
     PriceLowToHigh: "Price (low to high)",
   } as const;
+
+  export const CartButtonText = {
+    AddToCart: "Add to cart",
+    Remove: "Remove",
+  };
 }
