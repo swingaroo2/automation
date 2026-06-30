@@ -11,6 +11,10 @@ class DropdownListPage {
     this.dropdownHeader = page.getByRole("heading", { name: "Dropdown List" });
     this.dropdownList = page.locator("#dropdown");
   }
+
+  async selectDropdownOption(label: string) {
+    await this.dropdownList.selectOption({ label: label });
+  }
 }
 
 test("dropdowns", async ({ page }) => {
@@ -19,7 +23,6 @@ test("dropdowns", async ({ page }) => {
 
   // the docs seem to recommend selectOption using the internal label ("1" or "2") rather than the element value ("Option 1" or "Option 2")
   // I disagree with this design choice since the former is not user-facing, while the latter is
-  // How is selecting by the internal label anything but bad practice?
-  await page.locator("#dropdown").selectOption({ label: "Option 1" });
-  await page.locator("#dropdown").selectOption({ label: "Option 2" });
+  await dlp.selectDropdownOption("Option 1");
+  await dlp.selectDropdownOption("Option 2");
 });
