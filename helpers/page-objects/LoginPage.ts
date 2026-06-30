@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { Pages } from "../test-data/enums";
+import { Pages } from "../../test-data/enums";
 
 export class LoginPage {
   private readonly page: Page;

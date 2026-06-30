@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 import { LoginPage } from "./LoginPage";
-import { Logins } from "../test-data/enums";
+import { Logins } from "../../test-data/enums";
 
 export class InventoryPage {
   private readonly loginPage: LoginPage;

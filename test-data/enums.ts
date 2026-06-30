@@ -8,3 +8,11 @@ export enum Logins {
   StandardUser = "standard_user",
   Password = "secret_sauce",
 }
+
+export enum APIStatus {
+  HTTP201 = 201,
+}
+
+export enum APIStatusText {
+  Created = "Created",
+}

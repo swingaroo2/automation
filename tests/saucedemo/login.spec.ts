@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { test, testUsers } from "../../fixtures/my-fixtures";
+import { test, testUsers } from "../../helpers/fixtures/my-fixtures";
 import { Pages } from "../../test-data/enums";
 
 test.describe("Login Tests", () => {

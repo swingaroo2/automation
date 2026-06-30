@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "../../fixtures/my-fixtures";
-import { InventoryPage } from "../../page-objects/InventoryPage";
+import { test } from "../../helpers/fixtures/my-fixtures";
+import { InventoryPage } from "../../helpers/page-objects/InventoryPage";
 
 test.describe("Product Sort", () => {
   test("sort by name", async ({ inventoryPage }) => {

@@ -18,7 +18,10 @@ type MyFixtures = {
 
 // Note: readFileSync resolves relative paths from CWD at runetime
 // Note: modules imported at collection time need to be error free for tests to be successfully collected
-const testUsersFilePath = path.join(__dirname, "../test-data/test_users.json");
+const testUsersFilePath = path.join(
+  __dirname,
+  "../../test-data/test_users.json",
+);
 export const testUsers = JSON.parse(
   fs.readFileSync(testUsersFilePath, "utf-8"),
 ) as TestUser[];
