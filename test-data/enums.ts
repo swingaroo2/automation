@@ -10,9 +10,9 @@ export enum Logins {
 }
 
 export enum APIStatus {
-  HTTP201 = 201,
+  HTTP404 = 404,
 }
 
 export enum APIStatusText {
-  Created = "Created",
+  NotFound = "Not Found",
 }
