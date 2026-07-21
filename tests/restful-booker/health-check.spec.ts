@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 const BASE_URL = "https://restful-booker.herokuapp.com";
 const HC_ENDPOINT = "ping";
 
-test("TC-restful-001: should confirm API health", async ({ request }) => {
+test("TC-restful-001: fetch API health", async ({ request }) => {
   const healthCheck = await request.get(`${BASE_URL}/${HC_ENDPOINT}`);
   expect(healthCheck.ok()).toBeTruthy();
 });

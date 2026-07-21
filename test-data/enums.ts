@@ -10,6 +10,8 @@ export enum Logins {
 }
 
 export enum APIStatus {
+  HTTP200 = 200,
+  HTTP201 = 201,
   HTTP404 = 404,
 }
 

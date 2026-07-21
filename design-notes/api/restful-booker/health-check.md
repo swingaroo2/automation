@@ -4,6 +4,6 @@
 
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/ping`
-**Input/Query Params:** None
+**Test Data:** None
 **Assertion:** A `201` response code and `Created` status text
 **Location:** `qa-training/automation/design-notes/api/restful-booker/health-check.md`
