@@ -22,7 +22,7 @@ const SEED_DATA = {
   additionalneeds: "Breakfast",
 };
 
-const TEST_PAYLOAD = {
+const TEST_PAYLOAD_POST = {
   firstname: "Johnny",
   lastname: "Bravo",
   totalprice: 42069,
@@ -34,21 +34,33 @@ const TEST_PAYLOAD = {
   additionalneeds: "Lots of hairspray",
 };
 
+const UPDATED_PAYLOAD_PUT = {
+  firstname: "Wally",
+  lastname: "Browne",
+  totalprice: 112,
+  depositpaid: false,
+  bookingdates: {
+    checkin: "2024-02-23",
+    checkout: "2024-10-23",
+  },
+  additionalneeds: "Even more breakfast",
+};
+
 // MARK: Pre-test Hooks
-let seedDataBookingId: number;
 let authTokenCookie: string;
 
 test.beforeAll(async ({ request }) => {
   const fullUrl = `${BASE_URL}/${RBEndpoints.Auth}`;
-  const response = await request.post(fullUrl, {
+  const authResponse = await request.post(fullUrl, {
     data: {
       username: "admin",
       password: "password123",
     },
   });
 
-  const json = await response.json();
+  const json = await authResponse.json();
   authTokenCookie = json.token;
+  expect(authResponse.status()).toBe(APIStatus.HTTP200);
   expect(authTokenCookie).not.toBeNull();
   expect(typeof authTokenCookie).toBe("string");
 });
@@ -102,18 +114,17 @@ test.describe("GET /booking/{id}", () => {
   });
 });
 
-// TODO: Clean up other tests when done with new ones
 test.describe("POST /booking", () => {
   test("TC-restful-005: create valid booking (+cleanup)", async ({
     request,
   }) => {
     const fullUrl = `${BASE_URL}/${RBEndpoints.Booking}`;
-    const response = await request.post(fullUrl, { data: TEST_PAYLOAD });
+    const response = await request.post(fullUrl, { data: TEST_PAYLOAD_POST });
     const json = await response.json();
     expect(response.status()).toBe(APIStatus.HTTP200);
     expect(json.bookingid).toBeGreaterThan(0);
     expect(typeof json.bookingid).toBe("number");
-    expect(json.booking).toEqual(TEST_PAYLOAD);
+    expect(json.booking).toEqual(TEST_PAYLOAD_POST);
 
     const deleteUrl = `${fullUrl}/${json.bookingid}`;
     const deleteResponse = await request.delete(deleteUrl, {
@@ -147,9 +158,49 @@ test.describe("DELETE /booking/{id}", () => {
         Cookie: `token=${authTokenCookie}`,
       },
     });
+    const getResponse = await request.get(fullUrl);
     expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
+    expect(getResponse.status()).toBe(APIStatus.HTTP404);
+  });
+});
+
+test.describe("PUT /booking/{id}", () => {
+  let seedDataBookingId: number;
+  test.beforeAll(async ({ request }) => {
+    const seed_response = await request.post(
+      `${BASE_URL}/${RBEndpoints.Booking}`,
+      {
+        data: SEED_DATA,
+      },
+    );
+
+    const seed_json = await seed_response.json();
+    seedDataBookingId = seed_json.bookingid;
+  });
+
+  test("TC-restful-007: update existing booking", async ({ request }) => {
+    const fullUrl = `${BASE_URL}/${RBEndpoints.Booking}/${seedDataBookingId}`;
+    const putResponse = await request.put(fullUrl, {
+      headers: {
+        Cookie: `token=${authTokenCookie}`,
+      },
+      data: UPDATED_PAYLOAD_PUT,
+    });
+    const putResponseJson = await putResponse.json();
+    expect(putResponse.status()).toBe(APIStatus.HTTP200);
+    expect(putResponseJson).toEqual(UPDATED_PAYLOAD_PUT);
 
     const getResponse = await request.get(fullUrl);
-    expect(getResponse.status()).toBe(APIStatus.HTTP404);
+    const getResponseJson = await getResponse.json();
+    expect(getResponse.status()).toBe(APIStatus.HTTP200);
+    expect(getResponseJson).toEqual(UPDATED_PAYLOAD_PUT);
+
+    const deleteUrl = `${fullUrl}`;
+    const deleteResponse = await request.delete(deleteUrl, {
+      headers: {
+        Cookie: `token=${authTokenCookie}`,
+      },
+    });
+    expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
   });
 });

@@ -41,7 +41,7 @@ HTTP/1.1 200 OK
 **Test File:** `booking.spec.ts` | describe: "GET /booking/{id}"
 **Test Data:**
 
-id=${id returned from POSTing below JSON to `/booking` in `beforeAll` block}
+id=seedDataBookingId
 
 **Assertions:**
 
@@ -130,7 +130,7 @@ Authorization Header:
 - username: admin | password: password123
 - Auth will be set in a separate `beforeAll` hook, placed before the seed data `beforeAll` hook. Create file-scoped global to capture auth token.
 
-URL Params: id=${id returned from POSTing below JSON to `/booking` in `beforeAll` block}
+URL Params: id=seedDataBookingId
 
 Seed Data:
 
@@ -152,3 +152,59 @@ Seed Data:
 
 1. HTTP response code is `201` (use `APIStatus.HTTP201` enum case to represent `201`)
 2. A GET request on the `bookingid` for Sally Brown returns a `404` HTTP code (use `APIStatus.HTTP404` enum case to represent `404`)
+
+---
+
+**Test Case:** `TC-restful-007`
+
+**Base URL:** `https://restful-booker.herokuapp.com`
+**Endpoint:** `/booking/{id}`
+**Method:** PUT
+**Test File:** `booking.spec.ts` | describe: "PUT /booking/{id}"
+**Test Data**
+
+URL Params: id=seedDataBookingId
+
+Seed Data (owned by test)
+
+```json
+{
+  "firstname": "Sally",
+  "lastname": "Brown",
+  "totalprice": 111,
+  "depositpaid": true,
+  "bookingdates": {
+    "checkin": "2026-02-23",
+    "checkout": "2026-10-23"
+  },
+  "additionalneeds": "Breakfast"
+}
+```
+
+Updated Booking
+
+```json
+{
+  "firstname": "Wally",
+  "lastname": "Browne",
+  "totalprice": 112,
+  "depositpaid": false,
+  "bookingdates": {
+    "checkin": "2024-02-23",
+    "checkout": "2024-10-23"
+  },
+  "additionalneeds": "Even more breakfast"
+}
+```
+
+**Assertions**
+
+1. HTTP status code `200` (use `APIStatus.HTTP200` to represent code)
+2. Response body matches the expected updated booking
+3. Follow-up GET request on the updated booking id returns `200` (use `APIStatus.HTTP200` to represent code)
+4. Follow-up GET request on the updated booking id returns the updated booking
+
+**Notes**
+
+- Auth not mentioned in docs as a requirement for this endpoint
+- Delete booking after creating it as rep of habit
