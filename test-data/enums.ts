@@ -2,6 +2,7 @@ export enum Pages {
   SauceDemoLogin = "https://www.saucedemo.com/",
   SauceDemoInventory = "https://www.saucedemo.com/inventory.html",
   TheInternet = "https://the-internet.herokuapp.com/",
+  Demosite = "https://demoqa.com/books",
 }
 
 export enum Logins {

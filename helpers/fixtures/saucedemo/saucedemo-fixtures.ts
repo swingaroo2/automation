@@ -1,6 +1,6 @@
 import base from "@playwright/test";
-import { LoginPage } from "../page-objects/LoginPage";
-import { InventoryPage } from "../page-objects/InventoryPage";
+import { LoginPage } from "../../page-objects/saucedemo/LoginPage";
+import { InventoryPage } from "../../page-objects/saucedemo/InventoryPage";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -11,7 +11,7 @@ type TestUser = {
   errorMessage: string;
 };
 
-type MyFixtures = {
+type SauceDemoFixtures = {
   loginPage: LoginPage;
   inventoryPage: InventoryPage;
 };
@@ -26,7 +26,7 @@ export const testUsers = JSON.parse(
   fs.readFileSync(testUsersFilePath, "utf-8"),
 ) as TestUser[];
 
-export const test = base.extend<MyFixtures>({
+export const test = base.extend<SauceDemoFixtures>({
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
