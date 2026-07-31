@@ -1,12 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { APIStatus, APIStatusText } from "../../test-data/enums";
-
-const BASE_URL = "https://restful-booker.herokuapp.com";
-
-enum RBEndpoints {
-  Booking = "booking",
-  Auth = "auth",
-}
+import {
+  APIStatus,
+  APIStatusText,
+} from "../../test-data/restful-booker/status";
 
 // MARK: Test Data
 
@@ -50,7 +46,7 @@ const UPDATED_PAYLOAD_PUT = {
 let authTokenCookie: string;
 
 test.beforeAll(async ({ request }) => {
-  const fullUrl = `${BASE_URL}/${RBEndpoints.Auth}`;
+  const fullUrl = `/auth`;
   const authResponse = await request.post(fullUrl, {
     data: {
       username: "admin",
@@ -70,7 +66,7 @@ test.describe("GET /booking", () => {
   test("TC-restful-002: fetch bookings without filters", async ({
     request,
   }) => {
-    const bookings = await request.get(`${BASE_URL}/${RBEndpoints.Booking}`);
+    const bookings = await request.get(`/booking`);
     expect(bookings.ok()).toBeTruthy();
 
     const json = await bookings.json();
@@ -90,25 +86,20 @@ test.describe("GET /booking", () => {
 
 test.describe("GET /booking/{id}", () => {
   test("TC-restful-003: fetch booking by valid id", async ({ request }) => {
-    const seed_response = await request.post(
-      `${BASE_URL}/${RBEndpoints.Booking}`,
-      {
-        data: SEED_DATA,
-      },
-    );
+    const seed_response = await request.post(`/booking`, {
+      data: SEED_DATA,
+    });
 
     const seed_json = await seed_response.json();
     const seedDataBookingId = seed_json.bookingid;
 
-    const booking = await request.get(
-      `${BASE_URL}/${RBEndpoints.Booking}/${seedDataBookingId}`,
-    );
+    const booking = await request.get(`/booking/${seedDataBookingId}`);
     expect(booking.ok()).toBeTruthy();
     expect(await booking.json()).toEqual(expect.objectContaining(SEED_DATA));
   });
 
   test("TC-restful-004: fetch booking by invalid id", async ({ request }) => {
-    const booking = await request.get(`${BASE_URL}/${RBEndpoints.Booking}/0`);
+    const booking = await request.get(`/booking/0`);
     expect(booking.status()).toBe(APIStatus.HTTP404);
     expect(booking.statusText()).toBe(APIStatusText.NotFound);
   });
@@ -118,7 +109,7 @@ test.describe("POST /booking", () => {
   test("TC-restful-005: create valid booking (+cleanup)", async ({
     request,
   }) => {
-    const fullUrl = `${BASE_URL}/${RBEndpoints.Booking}`;
+    const fullUrl = `/booking`;
     const response = await request.post(fullUrl, { data: TEST_PAYLOAD_POST });
     const json = await response.json();
     expect(response.status()).toBe(APIStatus.HTTP200);
@@ -139,19 +130,16 @@ test.describe("POST /booking", () => {
 test.describe("DELETE /booking/{id}", () => {
   let seedDataBookingId: number;
   test.beforeAll(async ({ request }) => {
-    const seed_response = await request.post(
-      `${BASE_URL}/${RBEndpoints.Booking}`,
-      {
-        data: SEED_DATA,
-      },
-    );
+    const seed_response = await request.post(`/booking`, {
+      data: SEED_DATA,
+    });
 
     const seed_json = await seed_response.json();
     seedDataBookingId = seed_json.bookingid;
   });
 
   test("TC-restful-006: delete existing booking", async ({ request }) => {
-    const fullUrl = `${BASE_URL}/${RBEndpoints.Booking}/${seedDataBookingId}`;
+    const fullUrl = `/booking/${seedDataBookingId}`;
     const deleteResponse = await request.delete(fullUrl, {
       headers: {
         "Content-Type": "application/json",
@@ -167,19 +155,16 @@ test.describe("DELETE /booking/{id}", () => {
 test.describe("PUT /booking/{id}", () => {
   let seedDataBookingId: number;
   test.beforeAll(async ({ request }) => {
-    const seed_response = await request.post(
-      `${BASE_URL}/${RBEndpoints.Booking}`,
-      {
-        data: SEED_DATA,
-      },
-    );
+    const seed_response = await request.post(`/booking`, {
+      data: SEED_DATA,
+    });
 
     const seed_json = await seed_response.json();
     seedDataBookingId = seed_json.bookingid;
   });
 
   test("TC-restful-007: update existing booking", async ({ request }) => {
-    const fullUrl = `${BASE_URL}/${RBEndpoints.Booking}/${seedDataBookingId}`;
+    const fullUrl = `/booking/${seedDataBookingId}`;
     const putResponse = await request.put(fullUrl, {
       headers: {
         Cookie: `token=${authTokenCookie}`,

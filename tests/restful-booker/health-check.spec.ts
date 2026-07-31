@@ -1,10 +1,7 @@
 import { test, expect } from "@playwright/test";
-
-// I'm testing multiple different sites in this project, so I'll refrain from using a config to set baseURL
-const BASE_URL = "https://restful-booker.herokuapp.com";
 const HC_ENDPOINT = "ping";
 
 test("TC-restful-001: fetch API health", async ({ request }) => {
-  const healthCheck = await request.get(`${BASE_URL}/${HC_ENDPOINT}`);
+  const healthCheck = await request.get(`/${HC_ENDPOINT}`);
   expect(healthCheck.ok()).toBeTruthy();
 });

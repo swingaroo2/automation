@@ -18,7 +18,7 @@ type SauceDemoFixtures = {
 
 const testUsersFilePath = path.join(
   __dirname,
-  "../../../test-data/test_users.json",
+  "../../../test-data/saucedemo/test_users.json",
 );
 export const testUsers = JSON.parse(
   fs.readFileSync(testUsersFilePath, "utf-8"),

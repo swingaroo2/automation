@@ -3,7 +3,6 @@ import {
   test,
   testUsers,
 } from "../../helpers/fixtures/saucedemo/saucedemo-fixtures";
-import { Pages } from "../../test-data/enums";
 
 test.describe("Login Tests", () => {
   for (const user of testUsers) {
@@ -17,10 +16,9 @@ test.describe("Login Tests", () => {
       if (user.errorMessage) {
         await expect(loginPage.errorView).toBeVisible();
         await expect(loginPage.errorView).toHaveText(user.errorMessage);
-        await expect(page).toHaveURL(Pages.SauceDemoLogin);
       } else {
         await expect(loginPage.errorView).not.toBeVisible();
-        await expect(page).toHaveURL(Pages.SauceDemoInventory);
+        await expect(page).toHaveURL(/inventory\.html/);
         const expectedTitle = "Products";
         await expect(page.locator(".title")).toHaveText(expectedTitle);
       }

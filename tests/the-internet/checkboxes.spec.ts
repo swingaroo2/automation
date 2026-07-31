@@ -1,8 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { Pages } from "../../test-data/enums";
 
 test("checkboxes: end with both checked", async ({ page }) => {
-  await page.goto(`${Pages.TheInternet}checkboxes`);
+  await page.goto("/checkboxes");
   const cb1 = page.getByRole("checkbox").first();
   const cb2 = page.getByRole("checkbox").nth(1);
 

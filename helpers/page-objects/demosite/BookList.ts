@@ -1,5 +1,4 @@
 import { Locator, Page } from "@playwright/test";
-import { Pages } from "../../../test-data/enums";
 
 export class BookList {
   private readonly page: Page;
@@ -11,6 +10,6 @@ export class BookList {
   }
 
   async goto() {
-    await this.page.goto(Pages.Demosite);
+    await this.page.goto("/books");
   }
 }
