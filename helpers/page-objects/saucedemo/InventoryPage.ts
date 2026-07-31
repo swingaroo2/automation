@@ -1,6 +1,5 @@
 import { Locator, Page } from "@playwright/test";
 import { LoginPage } from "./LoginPage";
-import { Logins } from "../../../test-data/enums";
 
 export class InventoryPage {
   private readonly loginPage: LoginPage;
@@ -32,8 +31,7 @@ export class InventoryPage {
   }
 
   async goto() {
-    await this.loginPage.goto();
-    await this.loginPage.performLogin(Logins.StandardUser, Logins.Password);
+    await this.loginPage.page.goto("/inventory.html");
   }
 
   async selectProductSortOption(newOption: string) {

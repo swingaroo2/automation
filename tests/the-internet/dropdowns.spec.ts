@@ -1,5 +1,4 @@
 import { test, Page, Locator } from "@playwright/test";
-import { Pages } from "../../test-data/enums";
 
 class DropdownListPage {
   private readonly page: Page;
@@ -18,7 +17,7 @@ class DropdownListPage {
 }
 
 test("dropdowns", async ({ page }) => {
-  await page.goto(`${Pages.TheInternet}dropdown`);
+  await page.goto("/dropdown");
   const dlp = new DropdownListPage(page);
 
   // the docs seem to recommend selectOption using the internal label ("1" or "2") rather than the element value ("Option 1" or "Option 2")

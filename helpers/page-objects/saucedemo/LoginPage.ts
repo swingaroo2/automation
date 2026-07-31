@@ -1,5 +1,4 @@
 import { Page, Locator } from "@playwright/test";
-import { Pages } from "../../../test-data/enums";
 
 export class LoginPage {
   private readonly page: Page;
@@ -19,7 +18,7 @@ export class LoginPage {
   }
 
   async goto() {
-    await this.page.goto(Pages.SauceDemoLogin);
+    await this.page.goto("/");
   }
 
   async fillLoginFields(username: string = "", password: string = "") {

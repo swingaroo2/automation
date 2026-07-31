@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const SAUCE_DEMO_BASE_URL = "https://www.saucedemo.com";
+const THE_INTERNET_BASE_URL = "https://the-internet.herokuapp.com";
+const DEMOSITE_BASE_URL = "https://demoqa.com";
+const RESTFUL_BOOKER_BASE_URL = "https://restful-booker.herokuapp.com";
+
 const includeWebkit =
   process.platform !== "linux" ||
   process.env.PW_INCLUDE_WEBKIT === "1" ||
@@ -30,53 +35,94 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "retain-on-failure",
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects by platform, not by shared browser-only buckets. */
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "saucedemo-setup-chromium",
+      testMatch: "**/saucedemo/setup.auth.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: SAUCE_DEMO_BASE_URL,
+        storageState: undefined,
+      },
     },
-
     {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      name: "saucedemo-chromium",
+      testMatch: "**/saucedemo/**/*.spec.ts",
+      dependencies: ["saucedemo-setup-chromium"],
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: SAUCE_DEMO_BASE_URL,
+        storageState: ".auth/saucedemo-chromium.json",
+      },
     },
-
+    {
+      name: "saucedemo-setup-firefox",
+      testMatch: "**/saucedemo/setup.auth.ts",
+      use: {
+        ...devices["Desktop Firefox"],
+        baseURL: SAUCE_DEMO_BASE_URL,
+        storageState: undefined,
+      },
+    },
+    {
+      name: "saucedemo-firefox",
+      testMatch: "**/saucedemo/**/*.spec.ts",
+      dependencies: ["saucedemo-setup-firefox"],
+      use: {
+        ...devices["Desktop Firefox"],
+        baseURL: SAUCE_DEMO_BASE_URL,
+        storageState: ".auth/saucedemo-firefox.json",
+      },
+    },
     ...(includeWebkit
       ? [
           {
-            name: "webkit",
-            use: { ...devices["Desktop Safari"] },
+            name: "saucedemo-setup-webkit",
+            testMatch: "**/saucedemo/setup.auth.ts",
+            use: {
+              ...devices["Desktop Safari"],
+              baseURL: SAUCE_DEMO_BASE_URL,
+              storageState: undefined,
+            },
+          },
+          {
+            name: "saucedemo-webkit",
+            testMatch: "**/saucedemo/**/*.spec.ts",
+            dependencies: ["saucedemo-setup-webkit"],
+            use: {
+              ...devices["Desktop Safari"],
+              baseURL: SAUCE_DEMO_BASE_URL,
+              storageState: ".auth/saucedemo-webkit.json",
+            },
           },
         ]
       : []),
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: "the-internet-chromium",
+      testMatch: "**/the-internet/**/*.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: THE_INTERNET_BASE_URL,
+      },
+    },
+    {
+      name: "demosite-chromium",
+      testMatch: "**/demosite/**/*.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: DEMOSITE_BASE_URL,
+      },
+    },
+    {
+      name: "restful-booker-api",
+      testMatch: "**/restful-booker/**/*.spec.ts",
+      use: { baseURL: RESTFUL_BOOKER_BASE_URL },
+    },
   ],
 
   /* Run your local dev server before starting the tests */
