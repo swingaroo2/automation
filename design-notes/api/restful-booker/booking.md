@@ -5,7 +5,7 @@
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking`
 **Method:** GET
-**Test File:** `booking.spec.ts` | describe: "GET /booking"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "GET /booking"
 **Test Data:** None
 **Assertions:**
 
@@ -38,7 +38,7 @@ HTTP/1.1 200 OK
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking/{id}`
 **Method:** GET (with POST in `beforeAll` to seed the DB)
-**Test File:** `booking.spec.ts` | describe: "GET /booking/{id}"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "GET /booking/{id}"
 **Test Data:**
 
 id=seedDataBookingId
@@ -72,7 +72,7 @@ HTTP/1.1 200 OK
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking/{id}`
 **Method:** GET
-**Test File:** `booking.spec.ts` | describe: "GET /booking/{id}"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "GET /booking/{id}"
 **Test Data:** id=0 (0 is always an invalid bookingid)
 **Assertions:** A `404` status code and `Not Found` status text. Use `HTTP404` in `APIStatus` enum and `Not Found` in `APIStatusText` enum.
 
@@ -83,8 +83,9 @@ HTTP/1.1 200 OK
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking`
 **Method:** POST
-**Test File:** `booking.spec.ts` | describe: "POST /booking"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "POST /booking"
 **Test Data:**
+
 No URL params
 
 Use the following JSON in the request body
@@ -121,7 +122,7 @@ Use the following JSON in the request body
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking/{id}`
 **Method:** DELETE
-**Test File:** `booking.spec.ts` | describe: "DELETE /booking/{id}"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "DELETE /booking/{id}"
 **Test Data**
 
 Authorization Header:
@@ -130,7 +131,7 @@ Authorization Header:
 - username: admin | password: password123
 - Auth will be set in a separate `beforeAll` hook, placed before the seed data `beforeAll` hook. Create file-scoped global to capture auth token.
 
-URL Params: id=seedDataBookingId
+URL Params: id = (obtained from test seed data response)
 
 Seed Data:
 
@@ -159,11 +160,12 @@ Seed Data:
 
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking/{id}`
+**Expected Response:** `200`
 **Method:** PUT
-**Test File:** `booking.spec.ts` | describe: "PUT /booking/{id}"
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "PUT /booking/{id}"
 **Test Data**
 
-URL Params: id=seedDataBookingId
+URL Params: id = (obtained from test seed data response)
 
 Seed Data (owned by test)
 
@@ -206,5 +208,63 @@ Updated Booking
 
 **Notes**
 
-- Auth not mentioned in docs as a requirement for this endpoint
-- Delete booking after creating it as rep of habit
+- Auth not mentioned in docs as a requirement for this endpoint...but it's required
+- Use test-local bookingid to delete seeded booking as rep of habit
+
+---
+
+**Test Case:** TC-restful-008
+**Base URL:** `https://restful-booker.herokuapp.com`
+**Endpoint:** `/booking/{id}`
+**Method:** PUT
+**Expected Response:** `403` (no auth token)
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe "PUT /booking/{id}"
+**Test Data**
+
+URL Params: id = (obtained from test seed data response)
+
+Seed Data (owned by test)
+
+```json
+{
+  "firstname": "Sally",
+  "lastname": "Brown",
+  "totalprice": 111,
+  "depositpaid": true,
+  "bookingdates": {
+    "checkin": "2026-02-23",
+    "checkout": "2026-10-23"
+  },
+  "additionalneeds": "Breakfast"
+}
+```
+
+Updated Booking
+
+```json
+{
+  "firstname": "Wally",
+  "lastname": "Browne",
+  "totalprice": 112,
+  "depositpaid": false,
+  "bookingdates": {
+    "checkin": "2024-02-23",
+    "checkout": "2024-10-23"
+  },
+  "additionalneeds": "Even more breakfast"
+}
+```
+
+**Assertions**
+
+Note: not sending auth token cookie to trigger 403
+
+1. Failed no-auth PUT
+2. Seed data not updated by failed PUT
+3. Successful DELETE of seed data
+
+**Notes**
+
+- Use test-local bookingid to delete seeded booking as rep of habit. Auth token used here, outside of main assertions, to prevent test data leakage
+- Match the request pattern of `TC-restful-007` to isolate the absent auth token as the diff between tests
+- Prevent ride-along auth token by not adding it to the header. Hitting the `/auth` endpoint alone won't add it to the PUT request.
