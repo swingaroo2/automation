@@ -210,4 +210,33 @@ test.describe("PUT /booking/{id}", () => {
       expect(getResponseJson).toEqual(SEED_DATA);
     });
   });
+
+  test("TC-restful-008: no-auth booking update fails with 403", async ({
+    request,
+  }) => {
+    const endpoint = `/booking/${seedDataBookingId}`;
+
+    await test.step("assert: failed no-auth PUT", async () => {
+      const putResponse = await request.put(endpoint, {
+        data: UPDATED_PAYLOAD_PUT,
+      });
+      expect(putResponse.status()).toBe(APIStatus.HTTP403);
+    });
+
+    await test.step("assert: seed data not updated by failed PUT", async () => {
+      const getResponse = await request.get(endpoint);
+      const getResponseJson = await getResponse.json();
+      expect(getResponse.status()).toBe(APIStatus.HTTP200);
+      expect(getResponseJson).toEqual(SEED_DATA);
+    });
+
+    await test.step("assert: successful DELETE of seed data", async () => {
+      const deleteResponse = await request.delete(endpoint, {
+        headers: {
+          Cookie: `token=${authTokenCookie}`,
+        },
+      });
+      expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
+    });
+  });
 });
