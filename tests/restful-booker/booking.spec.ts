@@ -163,6 +163,16 @@ test.describe("PUT /booking/{id}", () => {
     seedDataBookingId = seed_json.bookingid;
   });
 
+  test.afterAll(async ({ request }) => {
+    const endpoint = `/booking/${seedDataBookingId}`;
+    const deleteResponse = await request.delete(endpoint, {
+      headers: {
+        Cookie: `token=${authTokenCookie}`,
+      },
+    });
+    expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
+  });
+
   test("TC-restful-007: update existing booking", async ({ request }) => {
     const fullUrl = `/booking/${seedDataBookingId}`;
     const putResponse = await request.put(fullUrl, {
@@ -179,13 +189,25 @@ test.describe("PUT /booking/{id}", () => {
     const getResponseJson = await getResponse.json();
     expect(getResponse.status()).toBe(APIStatus.HTTP200);
     expect(getResponseJson).toEqual(UPDATED_PAYLOAD_PUT);
+  });
 
-    const deleteUrl = `${fullUrl}`;
-    const deleteResponse = await request.delete(deleteUrl, {
-      headers: {
-        Cookie: `token=${authTokenCookie}`,
-      },
+  test("TC-restful-008: no-auth booking update fails with 403", async ({
+    request,
+  }) => {
+    const endpoint = `/booking/${seedDataBookingId}`;
+
+    await test.step("assert: failed no-auth PUT", async () => {
+      const putResponse = await request.put(endpoint, {
+        data: UPDATED_PAYLOAD_PUT,
+      });
+      expect(putResponse.status()).toBe(APIStatus.HTTP403);
     });
-    expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
+
+    await test.step("assert: seed data not updated by failed PUT", async () => {
+      const getResponse = await request.get(endpoint);
+      const getResponseJson = await getResponse.json();
+      expect(getResponse.status()).toBe(APIStatus.HTTP200);
+      expect(getResponseJson).toEqual(SEED_DATA);
+    });
   });
 });
