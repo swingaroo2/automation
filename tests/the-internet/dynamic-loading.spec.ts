@@ -3,6 +3,9 @@ import { test, expect } from "@playwright/test";
 test.describe("Dynamic Loading 1", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/dynamic_loading/1");
+    await expect(page).toHaveURL(
+      "https://the-internet.herokuapp.com/dynamic_loading/1",
+    );
   });
 
   test("TC-dynamicLoad1-001: click start button + assert dynamic content", async ({
