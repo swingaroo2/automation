@@ -1,7 +1,7 @@
 {
   "name": "automation",
   "version": "1.0.0",
-  "description": "",
+  "description": "QA automation portfolio with Playwright and TypeScript",
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/swingaroo2/automation#readme",
   "engines": {
-    "node": ">=18 <19"
+    "node": ">=24 <25"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

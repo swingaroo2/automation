@@ -1,8 +1,7 @@
 import { Locator, Page } from "@playwright/test";
-import { LoginPage } from "./LoginPage";
 
 export class InventoryPage {
-  private readonly loginPage: LoginPage;
+  private readonly page: Page;
 
   readonly productSortActiveOption: Locator;
   readonly productSortDropdown: Locator;
@@ -15,7 +14,7 @@ export class InventoryPage {
   readonly cartBadge: Locator;
 
   constructor(page: Page) {
-    this.loginPage = new LoginPage(page);
+    this.page = page;
 
     this.productSortActiveOption = page.locator(".active_option");
     this.productSortDropdown = page.getByRole("combobox");
@@ -31,7 +30,7 @@ export class InventoryPage {
   }
 
   async goto() {
-    await this.loginPage.page.goto("/inventory.html");
+    await this.page.goto("/inventory.html");
   }
 
   async selectProductSortOption(newOption: string) {

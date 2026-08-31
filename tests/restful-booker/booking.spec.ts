@@ -43,6 +43,8 @@ const UPDATED_PAYLOAD_PUT = {
 };
 
 // MARK: Pre-test Hooks
+// NOTE: A more robust test suite puts the auth token in a fixture to encapsulate
+// shaerd state
 let authTokenCookie: string;
 
 test.beforeAll(async ({ request }) => {
@@ -149,6 +151,30 @@ test.describe("DELETE /booking/{id}", () => {
     const getResponse = await request.get(fullUrl);
     expect(deleteResponse.status()).toBe(APIStatus.HTTP201);
     expect(getResponse.status()).toBe(APIStatus.HTTP404);
+  });
+
+  test("TC-restful-009: no-auth booking deletion fails with 403", async ({
+    request,
+  }) => {
+    const seedResponse = await request.post(`/booking`, { data: SEED_DATA });
+    const { bookingid: bookingId } = await seedResponse.json();
+
+    expect(seedResponse.status()).toBe(APIStatus.HTTP200);
+
+    const endpoint = `/booking/${bookingId}`;
+    const deleteResponse = await request.delete(endpoint);
+
+    // NOTE: To hide the existence of a backend resource, return a 404 instead
+    expect(deleteResponse.status()).toBe(APIStatus.HTTP403);
+
+    const getResponse = await request.get(endpoint);
+    expect(getResponse.status()).toBe(APIStatus.HTTP200);
+    expect(await getResponse.json()).toEqual(SEED_DATA);
+
+    const cleanupResponse = await request.delete(endpoint, {
+      headers: { Cookie: `token=${authTokenCookie}` },
+    });
+    expect(cleanupResponse.status()).toBe(APIStatus.HTTP201);
   });
 });
 

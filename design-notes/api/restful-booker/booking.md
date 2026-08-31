@@ -117,10 +117,11 @@ Use the following JSON in the request body
 
 ---
 
-**Test Case:** `TC-restful-006`
+**Test Case:** `TC-restful-006`: delete a booking with valid auth token
 
 **Base URL:** `https://restful-booker.herokuapp.com`
 **Endpoint:** `/booking/{id}`
+**Expected Response:** `201`
 **Method:** DELETE
 **Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe: "DELETE /booking/{id}"
 **Test Data**
@@ -268,3 +269,21 @@ Note: not sending auth token cookie to trigger 403
 - Use test-local bookingid to delete seeded booking as rep of habit. Auth token used here, outside of main assertions, to prevent test data leakage
 - Match the request pattern of `TC-restful-007` to isolate the absent auth token as the diff between tests
 - Prevent ride-along auth token by not adding it to the header. Hitting the `/auth` endpoint alone won't add it to the PUT request.
+
+---
+
+**Test Case:** TC-restful-009: delete a booking with no auth token
+**Base URL:** `https://restful-booker.herokuapp.com`
+**Endpoint:** `/booking/{id}`
+**Method:** DELETE
+**Expected Response:** `403` (no auth token)
+**Test File:** `automation/tests/restful-booker/booking.spec.ts` | describe "DELETE /booking/{id}"
+**Test Data** Sally Brown
+**Assertions**
+
+- expect(deleteResponse).toBe(APIStatus.HTTP403)
+- expect(getResponse).toBe(APIStatus.HTTP200)
+
+**Notes**
+
+- full text matrix includes: invalid/malformed, expired

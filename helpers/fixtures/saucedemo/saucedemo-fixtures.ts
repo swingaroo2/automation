@@ -24,6 +24,20 @@ export const testUsers = JSON.parse(
   fs.readFileSync(testUsersFilePath, "utf-8"),
 ) as TestUser[];
 
+function getValidTestUser(): TestUser {
+  const validTestUser = testUsers.find(
+    ({ partition }) => partition === "valid credentials",
+  );
+
+  if (!validTestUser) {
+    throw new Error('Missing the SauceDemo "valid credentials" test user.');
+  }
+
+  return validTestUser;
+}
+
+export const validTestUser = getValidTestUser();
+
 export const test = base.extend<SauceDemoFixtures>({
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
