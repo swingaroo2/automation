@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
 test("TC-entryAd-001: read, dismiss, and re-enable ad modal", async ({
   page,
 }) => {
-  const modal = page.locator("#modal");
+  const modal = page.locator(".modal");
   const modalHeading = modal.getByRole("heading", {
     name: "THIS IS A MODAL WINDOW",
   });
